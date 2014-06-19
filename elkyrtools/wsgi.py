@@ -9,7 +9,6 @@ https://docs.djangoproject.com/en/dev/howto/deployment/wsgi/
 
 import os
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "elkyrtools.settings")
-# os.environ['HTTPS'] = "on"
-# os.environ['wsgi.url_scheme'] = 'https'
+
 from django.core.wsgi import get_wsgi_application
 application = get_wsgi_application()

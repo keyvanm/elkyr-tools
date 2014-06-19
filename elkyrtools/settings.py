@@ -23,7 +23,7 @@ DEBUG = False
 
 TEMPLATE_DEBUG = True
 
-ALLOWED_HOSTS = ["tools.elkyr.com"]
+ALLOWED_HOSTS = ["elkyrtools-env-eumhprh8ng.elasticbeanstalk.com", "tools.elkyr.com"]
 
 
 # Application definition

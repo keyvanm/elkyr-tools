@@ -1,0 +1,1 @@
+default_app_config = 'fake_api_gen.app.FakeApiGenConfig'

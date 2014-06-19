@@ -35,6 +35,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'fake_api_gen',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -87,6 +88,12 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
+# HTTPS Security
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+
+# local settings
 try:
     from local_settings import *
 except ImportError, e:
@@ -97,8 +104,3 @@ try:
     SECRET_KEY
 except NameError:
     from secret_key_gen import SECRET_KEY
-
-# HTTPS Security
-SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-SESSION_COOKIE_SECURE = True
-CSRF_COOKIE_SECURE = True

@@ -4,6 +4,7 @@ from django.db import models
 class FakeApi(models.Model):
     name = models.CharField(max_length=200)
     owner = models.ForeignKey('auth.User', related_name='snippets', blank=True, null=True)
+    req_auth = models.BooleanField(default=True, verbose_name="Require Authentication?")
     date_modified = models.DateTimeField(auto_now=True)
     slug = models.SlugField(unique=True)
 

@@ -8,5 +8,5 @@ urlpatterns = patterns('',
 
     url(r'^admin/', include(admin.site.urls)),
     url(r'^fake_api_gen/', include('fake_api_gen.urls')),
-    url(r'^oauth2/', include('provider.oauth2.urls', namespace='oauth2')),
+    url(r'^o/', include('oauth2_provider.urls', namespace='oauth2_provider')),
 )

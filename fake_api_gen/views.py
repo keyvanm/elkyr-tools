@@ -3,7 +3,6 @@ from django.http import HttpResponse, Http404, HttpResponseForbidden
 from django.views.decorators.csrf import csrf_protect
 from django.shortcuts import get_object_or_404
 from fake_api_gen.models import FakeApi
-# Create your views here.
 
 
 @csrf_protect
@@ -11,8 +10,10 @@ def apiview(request, api_slug):
 	api_obj = get_object_or_404(FakeApi, slug=api_slug)
 
 	if api_obj.req_auth:
-		if (not request.user.is_authenticated() or (api_obj.owner != None and request.user != api_obj.owner)):
-			return HttpResponseForbidden('Access Forbidden')
+		if not request.user.is_authenticated():
+			return HttpResponseForbidden('Not Authenticated')
+		elif api_obj.owner != None and request.user != api_obj.owner:
+			return  HttpResponseForbidden('Access Forbidden')
 
 	if request.method != api_obj.request_method:
 		raise Http404

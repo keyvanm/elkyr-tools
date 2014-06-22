@@ -1,9 +1,10 @@
 from django.contrib import admin
 from django.db.models import Q
 from fake_api_gen.models import FakeApi
+from guardian.admin import GuardedModelAdmin
 
 
-class FakeApiAdmin(admin.ModelAdmin):
+class FakeApiAdmin(GuardedModelAdmin):
     list_display = ('name', 'owner', 'date_modified', 'slug_link')
     prepopulated_fields = {"slug": ("name",)}
 

@@ -45,3 +45,8 @@ class FakeApi(models.Model):
 	# @models.permalink
 	def get_absolute_url(self):
 		return '/fake_api_gen/fakeapi/%s/' % self.slug
+
+	class Meta:
+		permissions = (
+			('view_fakeapi', 'View fake api'),
+		)

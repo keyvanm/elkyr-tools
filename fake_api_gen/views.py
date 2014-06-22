@@ -12,8 +12,9 @@ def apiview(request, api_slug):
 	if api_obj.req_auth:
 		if not request.user.is_authenticated():
 			return HttpResponseForbidden('Not Authenticated')
-		elif api_obj.owner != None and request.user != api_obj.owner:
-			return  HttpResponseForbidden('Access Forbidden')
+		elif api_obj.owner != None and (
+			not request.user.has_perm('fake_api_gen.view_fakeapi', api_obj) and request.user != api_obj.owner):
+			return HttpResponseForbidden('Access Forbidden')
 
 	if request.method != api_obj.request_method:
 		raise Http404

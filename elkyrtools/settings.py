@@ -35,8 +35,9 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'fake_api_gen',
     'oauth2_provider',
+    'fake_api_gen',
+    'tracker',
 )
 
 AUTHENTICATION_BACKENDS = (

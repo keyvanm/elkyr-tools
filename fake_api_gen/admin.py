@@ -11,7 +11,7 @@ class FakeApiAdmin(admin.ModelAdmin):
     slug_link.allow_tags = True
     slug_link.short_description = "URL"
 
-    def queryset(self, request):
+    def get_queryset(self, request):
         """Limit Pages to those that belong to the request's user."""
         qs = super(FakeApiAdmin, self).queryset(request)
         if request.user.is_superuser:

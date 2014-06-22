@@ -16,7 +16,7 @@ class StoryAdmin(admin.ModelAdmin):
 	def get_queryset(self, request):
 		"""Limit Pages to those that belong to the request's user."""
 		qs = super(StoryAdmin, self).queryset(request)
-		if request.user.is_superuser or request.user.has_perm('all_story'):
+		if request.user.is_superuser or request.user.has_perm('tracker.all_story'):
 			return qs
 		return qs.filter(Q(assigned_to=request.user) | Q(project__contributers=request.user)).distinct()
 
@@ -28,7 +28,7 @@ class ProjectAdmin(admin.ModelAdmin):
 	def get_queryset(self, request):
 		"""Limit Pages to those that belong to the request's user."""
 		qs = super(ProjectAdmin, self).queryset(request)
-		if request.user.is_superuser or request.user.has_perm('all_project'):
+		if request.user.is_superuser or request.user.has_perm('tracker.all_project'):
 			return qs
 		return qs.filter(Q(manager=request.user) | Q(contributers=request.user)).distinct()
 

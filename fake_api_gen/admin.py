@@ -5,9 +5,10 @@ from fake_api_gen.models import FakeApi
 
 class FakeApiAdmin(admin.ModelAdmin):
     list_display = ('name', 'owner', 'date_modified', 'slug_link')
+    prepopulated_fields = {"slug": ("name",)}
 
     def slug_link(self, obj):
-        return u'<a target="__blank" href="/fake_api_gen/fakeapi/%s/">%s</a>' % (obj.slug, obj.slug)
+        return u'<a target="__blank" href="%s">%s</a>' % (obj.get_absolute_url(), obj.slug)
     slug_link.allow_tags = True
     slug_link.short_description = "URL"
 
@@ -18,8 +19,7 @@ class FakeApiAdmin(admin.ModelAdmin):
             # It is mine, all mine. Just return everything.
             return qs
         # Now we just add an extra filter on the queryset and
-        # we're done. Assumption: Page.owner is a foreignkey
-        # to a User.
+        # we're done.
         return qs.filter(Q(owner=request.user) | Q(owner__isnull=True))
 
     # Uncomment to make the object automatically attach to the user who made it

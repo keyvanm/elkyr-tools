@@ -5,6 +5,7 @@ from project import Project
 class Story(models.Model):
 	project = models.ForeignKey(Project, related_name='stories')
 	name = models.CharField(max_length=200)
+	created_at = models.DateTimeField(auto_now_add=True)
 	due_date = models.DateField()
 	STATE_CHOICES = (
 		(0, 'Not Started'),
@@ -26,12 +27,12 @@ class Story(models.Model):
 	def _status(self):
 		"""Returns the story's status."""
 		import datetime
-		if self.state == 0:
-			return "Not Started"
-		if self.due_date > datetime.now():
-			return "Green"
+		if self.due_date > datetime.date.today():
+			return True
 		else:
-			return "Red"
+			return False
+	_status.boolean = True
+	_status.admin_order_field = 'due_date'
 	status = property(_status)
 
 	def __unicode__(self):
@@ -44,4 +45,7 @@ class Story(models.Model):
 		ordering = ["due_date"]
 		verbose_name_plural = "stories"
 		app_label = "tracker"
+		permissions = (
+			('all_story', 'All permissions story'),
+		)
 

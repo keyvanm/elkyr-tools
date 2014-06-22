@@ -1,6 +1,8 @@
 https://www.djangoproject.com/download/1.7.b4/tarball/
 MySQL-python==1.2.5
 django-braces==1.4.0
+django-easy-select2==1.2.5
+django-guardian==1.2.0
 django-oauth-toolkit==0.7.1
 django-rest-swagger==0.1.14
 djangorestframework==2.3.14

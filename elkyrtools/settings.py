@@ -126,6 +126,10 @@ REST_FRAMEWORK = {
     ),
 }
 
+OAUTH2_PROVIDER = {
+    'ACCESS_TOKEN_EXPIRE_SECONDS': 30,
+}
+
 # local settings
 try:
     from local_settings import *

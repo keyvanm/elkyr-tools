@@ -38,6 +38,7 @@ INSTALLED_APPS = (
     'oauth2_provider',
     'easy_select2',
     'guardian',
+    'rest_framework',
     'fake_api_gen',
     'tracker',
 )

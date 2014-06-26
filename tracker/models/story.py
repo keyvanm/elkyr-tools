@@ -46,6 +46,7 @@ class Story(models.Model):
 		verbose_name_plural = "stories"
 		app_label = "tracker"
 		permissions = (
+            ('view_story', 'Can view stories'),
 			('all_story', 'All permissions story'),
 		)
 

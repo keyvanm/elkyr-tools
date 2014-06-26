@@ -17,5 +17,6 @@ class Project(models.Model):
     class Meta:
         app_label = "tracker"
         permissions = (
+            ('view_project', 'Can view project'),
             ('all_project', 'All permissions project'),
         )

@@ -16,7 +16,7 @@ class StorySerializer(serializers.HyperlinkedModelSerializer):
 class ProjectSerializer(serializers.HyperlinkedModelSerializer):
     manager = serializers.SlugRelatedField(read_only=False, slug_field='username')
     contributors = serializers.SlugRelatedField(many=True, read_only=False, slug_field='username')
-    stories = StorySerializer(many=True)
+    stories = StorySerializer(many=True, read_only=True)
 
     class Meta:
         model = Project
@@ -25,8 +25,8 @@ class ProjectSerializer(serializers.HyperlinkedModelSerializer):
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
     stories = StorySerializer(many=True)
-    managed_projects = ProjectSerializer(many=True)
-    contributed_projects = ProjectSerializer(many=True)
+    managed_projects = ProjectSerializer(many=True, read_only=True)
+    contributed_projects = ProjectSerializer(many=True, read_only=True)
 
     class Meta:
         model = User

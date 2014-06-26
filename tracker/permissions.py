@@ -12,8 +12,9 @@ class AuthenticatedDevIsManagerOrReadOnly(permissions.BasePermission):
         # user needs to be authenticated
         if request.user.is_authenticated:
             # Read permissions are allowed to authenticated requests by dev users
-            if request.method in permissions.SAFE_METHODS  \
-                    and (request.user.has_perm('tracker.view_project') or request.user.has_perms('tracker.all_project')):
+            if request.method in permissions.SAFE_METHODS \
+                    and (
+                        request.user.has_perm('tracker.view_project') or request.user.has_perms('tracker.all_project')):
                 return True
             # Write permissions for managers and superusers
             if request.user.is_superuser or request.user.has_perm(
@@ -27,7 +28,8 @@ class AuthenticatedDevIsManagerOrReadOnly(permissions.BasePermission):
         if request.user.is_authenticated:
             # Read permissions are allowed to authenticated requests by dev users
             if request.method in permissions.SAFE_METHODS \
-                    and (request.user.has_perm('tracker.view_project') or request.user.has_perms('tracker.all_project')):
+                    and (
+                        request.user.has_perm('tracker.view_project') or request.user.has_perms('tracker.all_project')):
                 return True
             # Write permissions for managers and superusers
             if request.user.is_superuser or request.user.has_perm('tracker.all_project'):

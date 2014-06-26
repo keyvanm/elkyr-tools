@@ -16,7 +16,7 @@ class SimpleStorySerializer(serializers.HyperlinkedModelSerializer):
 class SimpleProjectSerializer(serializers.HyperlinkedModelSerializer):
     manager = serializers.SlugRelatedField(read_only=False, slug_field='username')
     contributors = serializers.SlugRelatedField(many=True, read_only=False, slug_field='username')
-    stories = SimpleStorySerializer(many=True, read_only=True)
+    stories = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
 
     class Meta:
         model = Project

@@ -3,7 +3,7 @@ from rest_framework import serializers, renderers
 from tracker.models import Project, Story
 
 
-class StorySerializer(serializers.HyperlinkedModelSerializer):
+class SimpleStorySerializer(serializers.HyperlinkedModelSerializer):
     project = serializers.PrimaryKeyRelatedField(read_only=False)
     assigned_to = serializers.SlugRelatedField(read_only=False, slug_field='username')
 
@@ -13,20 +13,28 @@ class StorySerializer(serializers.HyperlinkedModelSerializer):
             'url', 'name', 'project', 'created_at', 'due_date', 'state', 'difficulty', 'description', 'assigned_to')
 
 
-class ProjectSerializer(serializers.HyperlinkedModelSerializer):
+class SimpleProjectSerializer(serializers.HyperlinkedModelSerializer):
     manager = serializers.SlugRelatedField(read_only=False, slug_field='username')
     contributors = serializers.SlugRelatedField(many=True, read_only=False, slug_field='username')
-    stories = StorySerializer(many=True, read_only=True)
+    stories = SimpleStorySerializer(many=True, read_only=True)
 
     class Meta:
         model = Project
         fields = ('url', 'name', 'manager', 'created_at', 'release_date', 'contributors', 'stories')
 
 
-class UserSerializer(serializers.HyperlinkedModelSerializer):
-    stories = StorySerializer(many=True)
-    managed_projects = ProjectSerializer(many=True, read_only=True)
-    contributed_projects = ProjectSerializer(many=True, read_only=True)
+class SimpleUserSerializer(serializers.HyperlinkedModelSerializer):
+
+    class Meta:
+        model = User
+        fields = ('url', 'username')
+        lookup_field = 'username'
+
+
+class UserNestedSerializer(SimpleUserSerializer):
+    stories = SimpleStorySerializer(many=True)
+    managed_projects = SimpleProjectSerializer(many=True, read_only=True)
+    contributed_projects = SimpleProjectSerializer(many=True, read_only=True)
 
     class Meta:
         model = User
@@ -34,11 +42,12 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
         lookup_field = 'username'
 
 
-class ProjectNestedSerializer(ProjectSerializer):
-    manager = UserSerializer(read_only=False)
-    contributors = UserSerializer(many=True, read_only=False)
+
+class ProjectNestedSerializer(SimpleProjectSerializer):
+    manager = SimpleUserSerializer(read_only=False)
+    contributors = SimpleUserSerializer(many=True, read_only=False)
 
 
-class StoryNestedSerializer(StorySerializer):
+class StoryNestedSerializer(SimpleStorySerializer):
     project = ProjectNestedSerializer(read_only=False)
-    assigned_to = UserSerializer(read_only=False)
+    assigned_to = SimpleUserSerializer(read_only=False)

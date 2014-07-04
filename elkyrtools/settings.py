@@ -40,8 +40,13 @@ INSTALLED_APPS = (
     'oauth2_provider',
     'easy_select2',
     'guardian',
+    'taggit',
+)
+
+INSTALLED_APPS += (
     'fake_api_gen',
     'tracker',
+    'fakesmak'
 )
 
 from django.conf.global_settings import TEMPLATE_CONTEXT_PROCESSORS as TCP

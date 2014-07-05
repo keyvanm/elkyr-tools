@@ -112,9 +112,9 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/dev/howto/static-files/
-
 STATIC_URL = '/static/'
-MEDIA_ROOT = '/media/'
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 if 'AWS_STORAGE_BUCKET_NAME' in os.environ:
     DEFAULT_FILE_STORAGE = 's3_folder_storage.s3.DefaultStorage'

@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from event import TagListSerializer
+from fakesmak.serializers.tag import TagListSerializer
 from user import SimpleUserSerializer
 from fakesmak.models import UserProfile
 

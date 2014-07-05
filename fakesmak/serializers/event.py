@@ -1,21 +1,7 @@
 from rest_framework import serializers
-from rest_framework.exceptions import ParseError
 
 from fakesmak.models import Event
-from user import LimitedUserSerializer
-
-
-class TagListSerializer(serializers.WritableField):
-    def from_native(self, data):
-        if type(data) is not list:
-            raise ParseError("expected a list of data")
-        return data
-
-    def to_native(self, obj):
-        if type(obj) is not list:
-            if type(obj) is not unicode:
-                return [tag.name for tag in obj.all()]
-        return obj
+from fakesmak.serializers.tag import TagListSerializer
 
 
 class SimpleEventSerializer(serializers.HyperlinkedModelSerializer):
@@ -29,7 +15,16 @@ class SimpleEventSerializer(serializers.HyperlinkedModelSerializer):
                   "description", "tags", "attendees", "upvotes", "downvotes")
 
 
+class LimitedEventSerializer(SimpleEventSerializer):
+    host_avatar = serializers.ImageField(source='host.profile.avatar', read_only=True)
+
+    class Meta:
+        model = Event
+        fields = ("url", "name", "location_lat", "location_long", "start_time", "host", "host_avatar",)
+
+
 class ListEventSerializer(SimpleEventSerializer):
+    from user import LimitedUserSerializer
     host = LimitedUserSerializer()
 
     class Meta:
@@ -39,5 +34,6 @@ class ListEventSerializer(SimpleEventSerializer):
 
 
 class ComplexEventSerializer(SimpleEventSerializer):
+    from user import LimitedUserSerializer
     host = LimitedUserSerializer()
     attendees = LimitedUserSerializer(many=True)

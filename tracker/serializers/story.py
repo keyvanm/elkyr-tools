@@ -14,7 +14,9 @@ class SimpleStorySerializer(serializers.HyperlinkedModelSerializer):
 
 
 class ListStorySerializer(SimpleStorySerializer):
-    pass
+    from project import SimpleProjectSerializer
+
+    project = SimpleProjectSerializer()
 
 
 class ComplexStorySerializer(SimpleStorySerializer):

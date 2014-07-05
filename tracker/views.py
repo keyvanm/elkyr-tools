@@ -23,8 +23,19 @@ class StoryViewSet(CreateListViewViewSet):
     complex_serializer_class = ComplexStorySerializer
     simple_serializer_class = SimpleStorySerializer
     list_serializer_class = ListStorySerializer
-    queryset = Story.objects.all()
+    model = Story
     permission_classes = (permissions.IsAuthenticated, tracker_permissions.DevIsAssignedOrManagerOrReadOnly,)
+
+    def get_queryset(self):
+        """
+        Optionally restricts the returned purchases to a given user,
+        by filtering against a `project` query parameter in the URL.
+        """
+        queryset = Story.objects.all()
+        project_name = self.request.QUERY_PARAMS.get('project', None)
+        if project_name is not None:
+            queryset = queryset.filter(project__name=project_name)
+        return queryset
 
 
 class UserViewSet(ReadOnlyListViewViewSet):

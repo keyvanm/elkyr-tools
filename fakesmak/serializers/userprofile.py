@@ -1,11 +1,11 @@
 from rest_framework import serializers
 
-from fakesmak.serializers.tag import TagListSerializer
-from user import SimpleUserSerializer
 from fakesmak.models import UserProfile
 
 
-class SimpleUserProfileSerializer(serializers.HyperlinkedModelSerializer):
+class UserProfileSimpleSerializer(serializers.HyperlinkedModelSerializer):
+    from fakesmak.serializers.tag import TagListSerializer
+
     interests = TagListSerializer()
     avatar = serializers.ImageField(read_only=True)
     user = serializers.SlugRelatedField(read_only=True, slug_field='username')
@@ -18,9 +18,11 @@ class SimpleUserProfileSerializer(serializers.HyperlinkedModelSerializer):
                   'date_of_birth', 'interests')
 
 
-class ListUserProfileSerializer(SimpleUserProfileSerializer):
+class UserProfileListSerializer(UserProfileSimpleSerializer):
     pass
 
 
-class ComplexUserProfileSerializer(SimpleUserProfileSerializer):
-    user = SimpleUserSerializer()
+class UserProfileComplexSerializer(UserProfileSimpleSerializer):
+    from fakesmak.serializers.user import UserSimpleSerializer
+
+    user = UserSimpleSerializer()

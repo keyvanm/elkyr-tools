@@ -3,16 +3,16 @@ from django.contrib.auth.models import User
 
 from elkyrtools.viewsets import CreateListViewViewSet
 
-from serializers import SimpleEventSerializer, SimpleUserProfileSerializer, SimpleUserSerializer, ListEventSerializer, \
-    ComplexEventSerializer, ListUserSerializer, ComplexUserSerializer, ListUserProfileSerializer, \
-    ComplexUserProfileSerializer
+from serializers import EventSimpleSerializer, UserProfileSimpleSerializer, UserSimpleSerializer, EventListSerializer, \
+    EventComplexSerializer, UserListSerializer, UserComplexSerializer, UserProfileListSerializer, \
+    UserProfileComplexSerializer
 from models import Event, UserProfile
 
 
 class EventViewSet(CreateListViewViewSet):
-    simple_serializer_class = SimpleEventSerializer
-    list_serializer_class = ListEventSerializer
-    complex_serializer_class = ComplexEventSerializer
+    simple_serializer_class = EventSimpleSerializer
+    list_serializer_class = EventListSerializer
+    complex_serializer_class = EventComplexSerializer
     queryset = Event.objects.all()
     permission_classes = (permissions.IsAuthenticated, )
 
@@ -24,15 +24,15 @@ class EventViewSet(CreateListViewViewSet):
 
 
 class UserViewSet(CreateListViewViewSet):
-    simple_serializer_class = SimpleUserSerializer
-    list_serializer_class = ListUserSerializer
-    complex_serializer_class = ComplexUserSerializer
+    simple_serializer_class = UserSimpleSerializer
+    list_serializer_class = UserListSerializer
+    complex_serializer_class = UserComplexSerializer
     lookup_field = 'username'
     queryset = User.objects.all()
 
 
 class UserProfileViewSet(CreateListViewViewSet):
-    simple_serializer_class = SimpleUserProfileSerializer
-    list_serializer_class = ListUserProfileSerializer
-    complex_serializer_class = ComplexUserProfileSerializer
+    simple_serializer_class = UserProfileSimpleSerializer
+    list_serializer_class = UserProfileListSerializer
+    complex_serializer_class = UserProfileComplexSerializer
     queryset = UserProfile.objects.all()

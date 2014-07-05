@@ -46,7 +46,7 @@ INSTALLED_APPS = (
 INSTALLED_APPS += (
     'fake_api_gen',
     'tracker',
-    'fakesmak'
+    'fakesmak',
 )
 
 from django.conf.global_settings import TEMPLATE_CONTEXT_PROCESSORS as TCP

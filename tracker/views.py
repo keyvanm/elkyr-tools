@@ -16,7 +16,7 @@ class ProjectViewSet(CreateListViewViewSet):
     list_serializer_class = ListProjectSerializer
     queryset = Project.objects.all()
     permission_classes = (
-        permissions.IsAuthenticated, permissions.tracker_permissions.AuthenticatedDevIsManagerOrReadOnly,)
+        permissions.IsAuthenticated, tracker_permissions.DevIsManagerOrReadOnly,)
 
 
 class StoryViewSet(CreateListViewViewSet):

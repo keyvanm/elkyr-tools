@@ -42,6 +42,7 @@ INSTALLED_APPS = (
     'guardian',
     'taggit',
     'storages',
+    'django_filters',
 )
 
 INSTALLED_APPS += (
@@ -146,6 +147,7 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticated',
     ),
+    'DEFAULT_FILTER_BACKENDS': ('rest_framework.filters.DjangoFilterBackend',),
 }
 
 OAUTH2_PROVIDER = {

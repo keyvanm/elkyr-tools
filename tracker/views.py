@@ -25,6 +25,7 @@ class StoryViewSet(CreateListViewViewSet):
     list_serializer_class = ListStorySerializer
     model = Story
     permission_classes = (permissions.IsAuthenticated, tracker_permissions.DevIsAssignedOrManagerOrReadOnly,)
+    filter_fields = ('name',)
 
     def get_queryset(self):
         """

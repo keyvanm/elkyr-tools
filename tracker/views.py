@@ -1,4 +1,5 @@
 from django.contrib.auth.models import User
+from rest_framework import permissions
 
 from elkyrtools.viewsets import ReadOnlyListViewViewSet, CreateListViewViewSet
 
@@ -14,7 +15,8 @@ class ProjectViewSet(CreateListViewViewSet):
     simple_serializer_class = SimpleProjectSerializer
     list_serializer_class = ListProjectSerializer
     queryset = Project.objects.all()
-    permission_classes = (tracker_permissions.AuthenticatedDevIsManagerOrReadOnly,)
+    permission_classes = (
+        permissions.IsAuthenticated, permissions.tracker_permissions.AuthenticatedDevIsManagerOrReadOnly,)
 
 
 class StoryViewSet(CreateListViewViewSet):
@@ -22,7 +24,7 @@ class StoryViewSet(CreateListViewViewSet):
     simple_serializer_class = SimpleStorySerializer
     list_serializer_class = ListStorySerializer
     queryset = Story.objects.all()
-    permission_classes = (tracker_permissions.AuthenticatedDevIsAssignedOrManagerOrReadOnly,)
+    permission_classes = (permissions.IsAuthenticated, tracker_permissions.DevIsAssignedOrManagerOrReadOnly,)
 
 
 class UserViewSet(ReadOnlyListViewViewSet):

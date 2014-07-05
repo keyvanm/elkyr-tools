@@ -3,14 +3,16 @@ from django.contrib.auth.models import User
 
 from elkyrtools.viewsets import CreateListViewViewSet
 
-from serializers import SimpleEventSerializer, SimpleUserProfileSerializer, SimpleUserSerializer
+from serializers import SimpleEventSerializer, SimpleUserProfileSerializer, SimpleUserSerializer, ListEventSerializer, \
+    ComplexEventSerializer, ListUserSerializer, ComplexUserSerializer, ListUserProfileSerializer, \
+    ComplexUserProfileSerializer
 from models import Event, UserProfile
 
 
 class EventViewSet(CreateListViewViewSet):
-    complex_serializer_class = SimpleEventSerializer
     simple_serializer_class = SimpleEventSerializer
-    list_serializer_class = SimpleEventSerializer
+    list_serializer_class = ListEventSerializer
+    complex_serializer_class = ComplexEventSerializer
     queryset = Event.objects.all()
     permission_classes = (permissions.IsAuthenticated, )
 
@@ -22,15 +24,15 @@ class EventViewSet(CreateListViewViewSet):
 
 
 class UserViewSet(CreateListViewViewSet):
-    complex_serializer_class = SimpleUserSerializer
     simple_serializer_class = SimpleUserSerializer
-    list_serializer_class = SimpleUserSerializer
+    list_serializer_class = ListUserSerializer
+    complex_serializer_class = ComplexUserSerializer
     lookup_field = 'username'
     queryset = User.objects.all()
 
 
 class UserProfileViewSet(CreateListViewViewSet):
-    complex_serializer_class = SimpleUserProfileSerializer
     simple_serializer_class = SimpleUserProfileSerializer
-    list_serializer_class = SimpleUserProfileSerializer
+    list_serializer_class = ListUserProfileSerializer
+    complex_serializer_class = ComplexUserProfileSerializer
     queryset = UserProfile.objects.all()

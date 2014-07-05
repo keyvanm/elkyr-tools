@@ -1,8 +1,8 @@
 from rest_framework import serializers
+from rest_framework.exceptions import ParseError
 
 from fakesmak.models import Event
-from rest_framework.exceptions import ParseError
-from taggit.forms import TagWidget
+from user import LimitedUserSerializer
 
 
 class TagListSerializer(serializers.WritableField):
@@ -27,3 +27,17 @@ class SimpleEventSerializer(serializers.HyperlinkedModelSerializer):
         model = Event
         fields = ("url", "name", "host", "start_time", "end_time", "location_lat", "location_long", "address",
                   "description", "tags", "attendees", "upvotes", "downvotes")
+
+
+class ListEventSerializer(SimpleEventSerializer):
+    host = LimitedUserSerializer()
+
+    class Meta:
+        model = Event
+        fields = ("url", "name", "host", "start_time", "end_time", "location_lat", "location_long", "tags", "upvotes",
+                  "downvotes")
+
+
+class ComplexEventSerializer(SimpleEventSerializer):
+    host = LimitedUserSerializer()
+    attendees = LimitedUserSerializer(many=True)

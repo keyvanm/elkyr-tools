@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 from event import TagListSerializer
+from user import SimpleUserSerializer
 from fakesmak.models import UserProfile
 
 
@@ -15,3 +16,11 @@ class SimpleUserProfileSerializer(serializers.HyperlinkedModelSerializer):
         model = UserProfile
         fields = ('url', 'user', 'avatar', 'bio', 'is_verified_facebook', 'is_verified_text',
                   'date_of_birth', 'interests')
+
+
+class ListUserProfileSerializer(SimpleUserProfileSerializer):
+    pass
+
+
+class ComplexUserProfileSerializer(SimpleUserProfileSerializer):
+    user = SimpleUserSerializer()

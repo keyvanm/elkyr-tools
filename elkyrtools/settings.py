@@ -124,11 +124,11 @@ if 'AWS_STORAGE_BUCKET_NAME' in os.environ:
     AWS_ACCESS_KEY_ID = os.environ['AWS_ACCESS_KEY_ID']
     AWS_SECRET_ACCESS_KEY = os.environ['AWS_SECRET_KEY']
     AWS_STORAGE_BUCKET_NAME =  os.environ['AWS_STORAGE_BUCKET_NAME']
-    
+
     MEDIA_ROOT = '/%s/' % DEFAULT_S3_PATH
-    MEDIA_URL = '//s3.amazonaws.com/%s/media/' % AWS_STORAGE_BUCKET_NAME
+    MEDIA_URL = '//%s.s3.amazonaws.com/media/' % AWS_STORAGE_BUCKET_NAME
     STATIC_ROOT = "/%s/" % STATIC_S3_PATH
-    STATIC_URL = '//s3.amazonaws.com/%s/static/' % AWS_STORAGE_BUCKET_NAME
+    STATIC_URL = '//%s.s3.amazonaws.com/static/' % AWS_STORAGE_BUCKET_NAME
     ADMIN_MEDIA_PREFIX = STATIC_URL + 'admin/'
 
 

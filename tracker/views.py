@@ -1,31 +1,36 @@
 from django.contrib.auth.models import User
-from rest_framework import viewsets, permissions, generics
+from rest_framework import viewsets, permissions
+from rest_framework.response import Response
+import logging
+
 from tracker import permissions as tracker_permissions
-from serializers import SimpleProjectSerializer, SimpleStorySerializer, ProjectNestedSerializer, StoryNestedSerializer, \
-    UserNestedSerializer
+from serializers import SimpleProjectSerializer, SimpleStorySerializer, ComplexProjectSerializer, ComplexStorySerializer, \
+    ComplexUserSerializer, ListProjectSerializer
 from models import Project, Story
 
 
 class ProjectViewSet(viewsets.ModelViewSet):
-    model = Project
+    queryset = Project.objects.all()
     permission_classes = (tracker_permissions.AuthenticatedDevIsManagerOrReadOnly,)
 
-    # TODO: On listing they should use the simple serializer too
     def get_serializer_class(self):
         if self.request.method in permissions.SAFE_METHODS:
-            return ProjectNestedSerializer
+            return ComplexProjectSerializer
         else:
             return SimpleProjectSerializer
+
+    def list(self, request):
+        self.get_serializer_class = lambda: ListProjectSerializer
+        return super(viewsets.ModelViewSet, self).list(self, request)
 
 
 class StoryViewSet(viewsets.ModelViewSet):
     model = Story
     permission_classes = (tracker_permissions.AuthenticatedDevIsAssignedOrManagerOrReadOnly,)
 
-    # TODO: On listing they should use the simple serializer too
     def get_serializer_class(self):
         if self.request.method in permissions.SAFE_METHODS:
-            return StoryNestedSerializer
+            return ComplexStorySerializer
         else:
             return SimpleStorySerializer
 
@@ -34,7 +39,7 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
     # TODO: On listing they should use the simple serializer too
     lookup_field = 'username'
     model = User
-    serializer_class = UserNestedSerializer
+    serializer_class = ComplexUserSerializer
 
 
 class ManagedProjectsByUserViewSet(viewsets.ModelViewSet):

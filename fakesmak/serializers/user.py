@@ -7,10 +7,12 @@ class UserSimpleSerializer(serializers.HyperlinkedModelSerializer):
     profile = serializers.PrimaryKeyRelatedField()
     username = serializers.Field()
     profile = serializers.PrimaryKeyRelatedField(read_only=True)
+    attended_events = serializers.PrimaryKeyRelatedField(many=True)
+    hosted_events = serializers.PrimaryKeyRelatedField(many=True)
 
     class Meta:
         model = User
-        fields = ('url', 'username', 'first_name', 'last_name', 'email', 'profile')
+        fields = ('url', 'username', 'first_name', 'last_name', 'email', 'profile', 'attended_events', 'hosted_events')
         lookup_field = 'username'
 
 
@@ -21,15 +23,11 @@ class UserListSerializer(UserSimpleSerializer):
 class UserComplexSerializer(UserSimpleSerializer):
     from fakesmak.serializers.userprofile import UserProfileSimpleSerializer
     from fakesmak.serializers.event import EventNestedInUserSerializer
+
     profile = UserProfileSimpleSerializer(read_only=True)
     # TODO: Just the user itself should see the attended_events
     attended_events = EventNestedInUserSerializer(many=True)
     hosted_events = EventNestedInUserSerializer(many=True)
-
-    class Meta:
-        model = User
-        fields = ('url', 'username', 'first_name', 'last_name', 'email', 'profile', 'attended_events', 'hosted_events')
-        lookup_field = 'username'
 
 
 class UserNestedInEventSerializer(UserSimpleSerializer):

@@ -1,0 +1,3 @@
+from event import SimpleEventSerializer
+from userprofile import SimpleUserProfileSerializer
+from user import SimpleUserSerializer

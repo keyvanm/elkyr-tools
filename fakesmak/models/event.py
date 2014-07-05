@@ -14,8 +14,8 @@ class Event(models.Model):
     description = models.TextField()
     tags = TaggableManager()  # TODO: look for alternatives
     attendees = models.ManyToManyField('auth.User', related_name='attended_events', blank=True)
-    upvotes = models.PositiveIntegerField()
-    downvotes = models.PositiveIntegerField()
+    upvotes = models.PositiveIntegerField(default=0)
+    downvotes = models.PositiveIntegerField(default=0)
 
     def __unicode__(self):
         return self.name

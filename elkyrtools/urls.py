@@ -8,4 +8,5 @@ urlpatterns = patterns('',
     url(r'^o/', include('oauth2_provider.urls', namespace='oauth2_provider')),
     url(r'^fake_api_gen/', include('fake_api_gen.urls')),
     url(r'^api/tracker/', include('tracker.urlsapi')),
+    url(r'^api/smak/', include('fakesmak.urlsapi')),
 )

@@ -65,3 +65,5 @@ local_settings.py
 secret.txt
 
 .DS_Store
+
+avatars/

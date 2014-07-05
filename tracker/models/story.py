@@ -28,6 +28,8 @@ class Story(models.Model):
         """Returns the story's status."""
         import datetime
 
+        if self.state == 3:
+            return True
         if self.due_date >= datetime.date.today():
             return True
         else:

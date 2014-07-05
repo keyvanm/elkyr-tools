@@ -3,16 +3,22 @@ from django.contrib.auth.models import User
 
 
 class UserSimpleSerializer(serializers.HyperlinkedModelSerializer):
-    # TODO: nobody except the user him/herself should see another person's email
-    profile = serializers.PrimaryKeyRelatedField()
     username = serializers.Field()
     profile = serializers.PrimaryKeyRelatedField(read_only=True)
-    attended_events = serializers.PrimaryKeyRelatedField(many=True)
     hosted_events = serializers.PrimaryKeyRelatedField(many=True)
 
     class Meta:
         model = User
-        fields = ('url', 'username', 'first_name', 'last_name', 'email', 'profile', 'attended_events', 'hosted_events')
+        fields = ('url', 'username', 'first_name', 'last_name', 'profile', 'hosted_events')
+        lookup_field = 'username'
+
+
+class UserOwnerOnUsernameSimpleSerializer(UserSimpleSerializer):
+    attended_events = serializers.PrimaryKeyRelatedField(many=True)
+
+    class Meta:
+        model = User
+        fields = ('url', 'username', 'first_name', 'last_name', 'profile', 'hosted_events', 'email', 'attended_events')
         lookup_field = 'username'
 
 
@@ -25,9 +31,18 @@ class UserComplexSerializer(UserSimpleSerializer):
     from fakesmak.serializers.event import EventNestedInUserSerializer
 
     profile = UserProfileSimpleSerializer(read_only=True)
-    # TODO: Just the user itself should see the attended_events
-    attended_events = EventNestedInUserSerializer(many=True)
     hosted_events = EventNestedInUserSerializer(many=True)
+
+
+class UserOwnerOnUsernameComplexSerializer(UserComplexSerializer):
+    from fakesmak.serializers.event import EventNestedInUserSerializer
+
+    attended_events = EventNestedInUserSerializer(many=True)
+
+    class Meta:
+        model = User
+        fields = ('url', 'username', 'first_name', 'last_name', 'profile', 'hosted_events', 'email', 'attended_events')
+        lookup_field = 'username'
 
 
 class UserNestedInEventSerializer(UserSimpleSerializer):

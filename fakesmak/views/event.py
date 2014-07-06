@@ -1,13 +1,18 @@
 from rest_framework import permissions
-from elkyrtools.viewsets import ViewSetMixin
+
+from elkyrtools.viewsets import OwnerRestrictedViewSet
 from fakesmak.models import Event
-from fakesmak.serializers import EventSimpleSerializer, EventListSerializer, EventComplexSerializer
+from fakesmak.serializers import EventSimpleSerializer, EventListSerializer, EventComplexSerializer, \
+    EventOwnerOnHostSimpleSerializer
 
 
-class EventViewSet(ViewSetMixin):
+class EventViewSet(OwnerRestrictedViewSet):
     simple_serializer_class = EventSimpleSerializer
     list_serializer_class = EventListSerializer
     complex_serializer_class = EventComplexSerializer
+    owner_field = "host"
+    owner_simple_serializer_class = EventOwnerOnHostSimpleSerializer
+    owner_complex_serializer_class = EventOwnerOnHostSimpleSerializer
     queryset = Event.objects.all()
     permission_classes = (permissions.IsAuthenticated, )
 

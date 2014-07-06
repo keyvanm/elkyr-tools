@@ -1,4 +1,14 @@
 from rest_framework import viewsets, permissions
+from django.core import exceptions
+
+
+def _is_owner(obj):
+    try:
+        if obj.owner_field is not None:
+            return obj.request.user.username == obj.get_object_or_none().__getattribute__(obj.owner_field).username
+        return obj.request.user.username == obj.get_object_or_none().username
+    except exceptions.ImproperlyConfigured:
+        return False
 
 
 class ReadOnlyViewSetMixin(viewsets.ReadOnlyModelViewSet):
@@ -27,7 +37,7 @@ class OwnerRestrictedReadOnlyViewSetMixin(ReadOnlyViewSetMixin):
     """
 
     def get_serializer_class(self):
-        if self.request.user.username == self.object.__getattribute__(self.owner_field):
+        if _is_owner(self):
             return self.owner_complex_serializer_class
         return self.complex_serializer_class
 
@@ -49,10 +59,10 @@ class ViewSetMixin(viewsets.ModelViewSet, ReadOnlyViewSetMixin):
 class OwnerRestrictedViewSet(ViewSetMixin):
     def get_serializer_class(self):
         if self.request.method in permissions.SAFE_METHODS:
-            if self.request.user.username == self.object.__getattribute__(self.owner_field):
+            if _is_owner(self):
                 return self.owner_complex_serializer_class
             return self.complex_serializer_class
         else:
-            if self.request.user.username == self.object.__getattribute__(self.owner_field):
+            if _is_owner(self):
                 return self.owner_simple_serializer_class
             return self.simple_serializer_class

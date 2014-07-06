@@ -11,6 +11,6 @@ class UserViewSet(OwnerRestrictedViewSet):
     complex_serializer_class = UserComplexSerializer
     owner_simple_serializer_class = UserOwnerOnUsernameSimpleSerializer
     owner_complex_serializer_class = UserOwnerOnUsernameComplexSerializer
-    owner_field = 'username'
+    owner_field = None
     lookup_field = 'username'
     queryset = User.objects.all()

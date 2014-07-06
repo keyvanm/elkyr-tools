@@ -1,20 +1,17 @@
 from rest_framework import permissions
 
-from elkyrtools.viewsets import OwnerRestrictedViewSet
+from elkyrtools.viewsets import ViewSetMixin
 from fakesmak.models import Event
-from fakesmak.serializers import EventSimpleSerializer, EventListSerializer, EventComplexSerializer, \
-    EventOwnerOnHostSimpleSerializer
+from fakesmak.serializers import EventSimpleSerializer, EventListSerializer, EventComplexSerializer
 
 
-class EventViewSet(OwnerRestrictedViewSet):
+class EventViewSet(ViewSetMixin):
     simple_serializer_class = EventSimpleSerializer
     list_serializer_class = EventListSerializer
     complex_serializer_class = EventComplexSerializer
-    owner_field = "host"
-    owner_simple_serializer_class = EventOwnerOnHostSimpleSerializer
-    owner_complex_serializer_class = EventOwnerOnHostSimpleSerializer
     queryset = Event.objects.all()
     permission_classes = (permissions.IsAuthenticated, )
+    owner = 'host'
 
     def post_save(self, *args, **kwargs):
         if 'tags' in self.request.DATA:

@@ -2,15 +2,6 @@ from rest_framework import viewsets, permissions
 from django.core import exceptions
 
 
-def _is_owner(obj):
-    try:
-        if obj.owner_field is not None:
-            return obj.request.user.username == obj.get_object_or_none().__getattribute__(obj.owner_field).username
-        return obj.request.user.username == obj.get_object_or_none().username
-    except exceptions.ImproperlyConfigured:
-        return False
-
-
 class ReadOnlyViewSetMixin(viewsets.ReadOnlyModelViewSet):
     """
     A view set that supports 2 different kinds of serialization for listing and viewing objects
@@ -19,27 +10,41 @@ class ReadOnlyViewSetMixin(viewsets.ReadOnlyModelViewSet):
     list_serializer_class
     """
 
+    private_to_owner_fields = None
+    owner = None
+
+    def is_requester_the_owner(self):
+        """
+        Check if the user doing the request is the owner of the object or not
+        """
+        # TODO: Still feels a bit hacky, feel free to find a better solution later
+        try:
+            if self.owner != 'self':
+                return self.request.user.username == self.get_object_or_none().__getattribute__(self.owner).username
+            return self.request.user.username == self.get_object_or_none().username
+        except (exceptions.ImproperlyConfigured, AttributeError):
+            return False
+
+    def limit_serializer_class_if_needed(self, serializer_class):
+        """
+        If there are private fields that only the owner should have access to, remove them from the serializer
+        """
+        if self.private_to_owner_fields is None or self.is_requester_the_owner():
+            return serializer_class
+        else:
+            current_fields = serializer_class.Meta.fields
+            limited_fields = tuple(set(current_fields) - set(self.private_to_owner_fields))
+            print limited_fields
+            serializer_class.Meta.fields = limited_fields
+            return serializer_class
+
     def get_serializer_class(self):
-        return self.complex_serializer_class
+        return self.limit_serializer_class_if_needed(self.complex_serializer_class)
 
     def list(self, request, **kwargs):
         # Override get_serializer_class method to return the List Serializer
-        self.get_serializer_class = lambda: self.list_serializer_class
+        self.get_serializer_class = lambda: self.limit_serializer_class_if_needed(self.list_serializer_class)
         return super(viewsets.ReadOnlyModelViewSet, self).list(self, request)
-
-
-class OwnerRestrictedReadOnlyViewSetMixin(ReadOnlyViewSetMixin):
-    """
-    If a field needs restriction from unauthorized users, use this ViewSet
-    2 new fields:
-    owner_field
-    owner_complex_serializer_class
-    """
-
-    def get_serializer_class(self):
-        if _is_owner(self):
-            return self.owner_complex_serializer_class
-        return self.complex_serializer_class
 
 
 class ViewSetMixin(viewsets.ModelViewSet, ReadOnlyViewSetMixin):
@@ -49,20 +54,9 @@ class ViewSetMixin(viewsets.ModelViewSet, ReadOnlyViewSetMixin):
     simple_serializer_class
     """
 
-    def get_serializer_class(self):
+    def _get_serializer_class(self):
         if self.request.method in permissions.SAFE_METHODS:
-            return self.complex_serializer_class
+            return self.limit_serializer_class_if_needed(self.complex_serializer_class)
         else:
-            return self.simple_serializer_class
+            return self.limit_serializer_class_if_needed(self.simple_serializer_class)
 
-
-class OwnerRestrictedViewSet(ViewSetMixin):
-    def get_serializer_class(self):
-        if self.request.method in permissions.SAFE_METHODS:
-            if _is_owner(self):
-                return self.owner_complex_serializer_class
-            return self.complex_serializer_class
-        else:
-            if _is_owner(self):
-                return self.owner_simple_serializer_class
-            return self.simple_serializer_class

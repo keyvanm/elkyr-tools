@@ -1,4 +1,3 @@
-from event import EventSimpleSerializer, EventListSerializer, EventComplexSerializer, EventOwnerOnHostSimpleSerializer
+from event import EventSimpleSerializer, EventListSerializer, EventComplexSerializer
 from userprofile import UserProfileSimpleSerializer, UserProfileListSerializer, UserProfileComplexSerializer
-from user import UserSimpleSerializer, UserNestedInEventSerializer, UserListSerializer, UserComplexSerializer, \
-    UserOwnerOnUsernameSimpleSerializer, UserOwnerOnUsernameComplexSerializer
+from user import UserSimpleSerializer, UserListSerializer, UserComplexSerializer

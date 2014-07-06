@@ -54,7 +54,7 @@ class ViewSetMixin(viewsets.ModelViewSet, ReadOnlyViewSetMixin):
     simple_serializer_class
     """
 
-    def _get_serializer_class(self):
+    def get_serializer_class(self):
         if self.request.method in permissions.SAFE_METHODS:
             return self.limit_serializer_class_if_needed(self.complex_serializer_class)
         else:

@@ -7,13 +7,14 @@ class EventSimpleSerializer(serializers.HyperlinkedModelSerializer):
     from fakesmak.serializers.tag import TagListSerializer
 
     tags = TagListSerializer()
-    host = serializers.SlugRelatedField(read_only=False, slug_field='username')
-    attendees = serializers.SlugRelatedField(many=True, read_only=False, slug_field='username')
+    host = serializers.SlugRelatedField(slug_field='username')
+    attendees = serializers.SlugRelatedField(many=True, slug_field='username', read_only=True)
 
     class Meta:
         model = Event
         fields = ("url", "name", "host", "start_time", "end_time", "location_lat", "location_long", "address",
                   "description", "tags", "upvotes", "downvotes", "attendees",)
+        read_only_fields = ("upvotes", "downvotes",)
 
 
 class EventNestedInUserSerializer(EventSimpleSerializer):

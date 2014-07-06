@@ -1,7 +1,7 @@
 from django.contrib.auth.models import User
-from rest_framework import permissions
+from rest_framework import permissions, viewsets
 
-from elkyrtools.viewsets import ReadOnlyListViewViewSet, CreateListViewViewSet
+from elkyrtools.viewsets import ReadOnlyViewSetMixin, ViewSetMixin
 
 from tracker import permissions as tracker_permissions
 from serializers import SimpleProjectSerializer, SimpleStorySerializer, ComplexProjectSerializer, \
@@ -10,7 +10,7 @@ from serializers import SimpleProjectSerializer, SimpleStorySerializer, ComplexP
 from models import Project, Story
 
 
-class ProjectViewSet(CreateListViewViewSet):
+class ProjectViewSet(ViewSetMixin):
     complex_serializer_class = ComplexProjectSerializer
     simple_serializer_class = SimpleProjectSerializer
     list_serializer_class = ListProjectSerializer
@@ -19,7 +19,7 @@ class ProjectViewSet(CreateListViewViewSet):
         permissions.IsAuthenticated, tracker_permissions.DevIsManagerOrReadOnly,)
 
 
-class StoryViewSet(CreateListViewViewSet):
+class StoryViewSet(ViewSetMixin):
     complex_serializer_class = ComplexStorySerializer
     simple_serializer_class = SimpleStorySerializer
     list_serializer_class = ListStorySerializer
@@ -39,9 +39,8 @@ class StoryViewSet(CreateListViewViewSet):
         return queryset
 
 
-class UserViewSet(ReadOnlyListViewViewSet):
+class UserViewSet(ReadOnlyViewSetMixin):
     complex_serializer_class = ComplexUserSerializer
-    simple_serializer_class = SimpleUserSerializer
     list_serializer_class = ListUserSerializer
     lookup_field = 'username'
     queryset = User.objects.all()

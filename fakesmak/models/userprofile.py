@@ -1,4 +1,6 @@
 import datetime
+import uuid
+import os
 
 from django.db import models
 from django.db.models.signals import post_save
@@ -6,9 +8,15 @@ from django.contrib.auth.models import User
 from taggit.managers import TaggableManager
 
 
+def unique_filename(instance, filename):
+    f, ext = os.path.splitext(filename)
+    filename = '%s%s' % (uuid.uuid4().hex, ext)
+    return os.path.join("avatars", filename)
+
+
 class UserProfile(models.Model):
     user = models.OneToOneField('auth.User', related_name="profile")
-    avatar = models.ImageField(upload_to="avatars")
+    avatar = models.ImageField(upload_to=unique_filename, blank=True)
     bio = models.TextField()
     is_verified_facebook = models.BooleanField(default=False)
     is_verified_text = models.BooleanField(default=False)

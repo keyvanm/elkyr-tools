@@ -7,7 +7,8 @@ class EventSimpleSerializer(serializers.HyperlinkedModelSerializer):
     from fakesmak.serializers.tag import TagListSerializer
 
     tags = TagListSerializer()
-    host = serializers.SlugRelatedField(slug_field='username')
+    # TODO: Host is being readonly here, but I feel like it should be changeable only the host itself
+    host = serializers.SlugRelatedField(slug_field='username', read_only=True)
     attendees = serializers.SlugRelatedField(many=True, slug_field='username', read_only=True)
 
     class Meta:
@@ -28,7 +29,7 @@ class EventNestedInUserSerializer(EventSimpleSerializer):
 class EventListSerializer(EventSimpleSerializer):
     from user import UserNestedInEventSerializer
 
-    host = UserNestedInEventSerializer()
+    host = UserNestedInEventSerializer(read_only=True)
 
     class Meta:
         model = Event
@@ -39,5 +40,5 @@ class EventListSerializer(EventSimpleSerializer):
 class EventComplexSerializer(EventSimpleSerializer):
     from user import UserNestedInEventSerializer
 
-    host = UserNestedInEventSerializer()
+    host = UserNestedInEventSerializer(read_only=True)
     attendees = UserNestedInEventSerializer(many=True)

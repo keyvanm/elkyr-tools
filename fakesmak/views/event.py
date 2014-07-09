@@ -31,6 +31,12 @@ class EventViewSet(viewsets.ModelViewSet, SLCGenericAPIViewMixin):
             return Response({'error': 'user %s is not an attendee of event %s' % (request.user, event)},
                             status=status.HTTP_412_PRECONDITION_FAILED)
 
+    def pre_save(self, event):
+        """
+        Set the event's host, based on the incoming request.
+        """
+        event.host = self.request.user
+
     def post_save(self, *args, **kwargs):
         """
         Adds the event's host as one of the attendees and saves the tags sent with the request

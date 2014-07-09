@@ -1,10 +1,11 @@
 from django.contrib.auth.models import User
+from rest_framework import viewsets
 
-from elkyrtools.viewsets import ViewSetMixin
+from elkyrtools.viewsets import SLCGenericAPIViewMixin
 from fakesmak.serializers import UserSimpleSerializer, UserListSerializer, UserComplexSerializer
 
 
-class UserViewSet(ViewSetMixin):
+class UserViewSet(viewsets.ModelViewSet, SLCGenericAPIViewMixin):
     simple_serializer_class = UserSimpleSerializer
     list_serializer_class = UserListSerializer
     complex_serializer_class = UserComplexSerializer

@@ -1,17 +1,24 @@
-from rest_framework import viewsets, permissions
+from rest_framework import generics, permissions
 from django.core import exceptions
 
 
-class ReadOnlyViewSetMixin(viewsets.ReadOnlyModelViewSet):
+def assert_field_exists(obj, field):
+    error_message = "'%s' should include a '{0}' attribute" % obj.__class__.__name__
+    assert getattr(obj, field, None) is not None, error_message.format(field)
+
+
+class SLCGenericAPIViewMixin(generics.GenericAPIView):
     """
-    A view set that supports 2 different kinds of serialization for listing and viewing objects
-    2 fields need to be defined on the viewset that subclasses it
+    A view that supports 2 different kinds of serialization for listing and viewing objects
+    2 fields need to be defined on the view that subclasses it
     complex_serializer_class
     list_serializer_class
+    If the subclass also needs write permissions, it needs to define
+    simple_serializer_class
     """
-
-    complex_serializer_class = None
+    simple_serializer_class = None
     list_serializer_class = None
+    complex_serializer_class = None
 
     private_to_owner_fields = None
     owner = None
@@ -42,46 +49,17 @@ class ReadOnlyViewSetMixin(viewsets.ReadOnlyModelViewSet):
             return serializer_class
 
     def get_serializer_class(self):
-        error_message_list = "'{0}' should include a 'list_serializer_class' attribute".format(self.__class__.__name__)
-        error_message_complex = "'{0}' should include a 'complex_serializer_class' attribute".format(
-            self.__class__.__name__)
-        assert self.list_serializer_class is not None, error_message_list
-        assert self.complex_serializer_class is not None, error_message_complex
         if getattr(self, 'object', None) is not None:
-            # self has attr object therefore it's an item (detail) view
-            return self.limit_serializer_class_if_needed(self.complex_serializer_class)
-        else:
-            return self.limit_serializer_class_if_needed(self.list_serializer_class)
-
-
-class ViewSetMixin(viewsets.ModelViewSet, ReadOnlyViewSetMixin):
-    """
-    Same as ReadOnlyViewSetMixin but with the addition of creation of objects
-    In addition to the super class's fields it needs another field defined:
-    simple_serializer_class
-    """
-
-    simple_serializer_class = None
-
-    def get_serializer_class(self):
-        error_message_simple = "'{0}' should include a 'simple_serializer_class' attribute".format(
-            self.__class__.__name__)
-        error_message_list = "'{0}' should include a 'list_serializer_class' attribute".format(self.__class__.__name__)
-        error_message_complex = "'{0}' should include a 'complex_serializer_class' attribute".format(
-            self.__class__.__name__)
-        assert self.list_serializer_class is not None, error_message_simple
-        assert self.list_serializer_class is not None, error_message_list
-        assert self.complex_serializer_class is not None, error_message_complex
-        if getattr(self, 'object', None) is not None:
-            print "object", self.object
-            # self has attr object therefore it's an item (detail) view
             if self.request.method in permissions.SAFE_METHODS:
+                assert_field_exists(self, "complex_serializer_class")
                 return self.limit_serializer_class_if_needed(self.complex_serializer_class)
             else:
+                assert_field_exists(self, 'simple_serializer_class')
                 return self.limit_serializer_class_if_needed(self.simple_serializer_class)
         else:
-            print "no object", self.simple_serializer_class.__name__
             if self.request.method in permissions.SAFE_METHODS:
+                assert_field_exists(self, 'list_serializer_class')
                 return self.limit_serializer_class_if_needed(self.list_serializer_class)
             else:
+                assert_field_exists(self, 'simple_serializer_class')
                 return self.limit_serializer_class_if_needed(self.simple_serializer_class)

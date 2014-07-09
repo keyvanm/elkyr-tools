@@ -1,11 +1,11 @@
-from rest_framework import permissions
+from rest_framework import permissions, viewsets
 
-from elkyrtools.viewsets import ViewSetMixin
+from elkyrtools.viewsets import SLCGenericAPIViewMixin
 from fakesmak.models import Event
 from fakesmak.serializers import EventSimpleSerializer, EventListSerializer, EventComplexSerializer
 
 
-class EventViewSet(ViewSetMixin):
+class EventViewSet(viewsets.ModelViewSet, SLCGenericAPIViewMixin):
     simple_serializer_class = EventSimpleSerializer
     list_serializer_class = EventListSerializer
     complex_serializer_class = EventComplexSerializer

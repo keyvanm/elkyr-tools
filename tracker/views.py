@@ -1,16 +1,14 @@
 from django.contrib.auth.models import User
 from rest_framework import permissions, viewsets
 
-from elkyrtools.viewsets import ReadOnlyViewSetMixin, ViewSetMixin
-
+from elkyrtools.viewsets import SLCGenericAPIViewMixin
 from tracker import permissions as tracker_permissions
 from serializers import SimpleProjectSerializer, SimpleStorySerializer, ComplexProjectSerializer, \
-    ComplexStorySerializer, ComplexUserSerializer, ListProjectSerializer, ListStorySerializer, SimpleUserSerializer, \
-    ListUserSerializer
+    ComplexStorySerializer, ComplexUserSerializer, ListProjectSerializer, ListStorySerializer, ListUserSerializer
 from models import Project, Story
 
 
-class ProjectViewSet(ViewSetMixin):
+class ProjectViewSet(viewsets.ModelViewSet, SLCGenericAPIViewMixin):
     complex_serializer_class = ComplexProjectSerializer
     simple_serializer_class = SimpleProjectSerializer
     list_serializer_class = ListProjectSerializer
@@ -19,7 +17,7 @@ class ProjectViewSet(ViewSetMixin):
         permissions.IsAuthenticated, tracker_permissions.DevIsManagerOrReadOnly,)
 
 
-class StoryViewSet(ViewSetMixin):
+class StoryViewSet(viewsets.ModelViewSet, SLCGenericAPIViewMixin):
     complex_serializer_class = ComplexStorySerializer
     simple_serializer_class = SimpleStorySerializer
     list_serializer_class = ListStorySerializer
@@ -39,7 +37,7 @@ class StoryViewSet(ViewSetMixin):
         return queryset
 
 
-class UserViewSet(ReadOnlyViewSetMixin):
+class UserViewSet(viewsets.ReadOnlyModelViewSet, SLCGenericAPIViewMixin):
     complex_serializer_class = ComplexUserSerializer
     list_serializer_class = ListUserSerializer
     lookup_field = 'username'

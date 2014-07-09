@@ -10,6 +10,9 @@ class ReadOnlyViewSetMixin(viewsets.ReadOnlyModelViewSet):
     list_serializer_class
     """
 
+    complex_serializer_class = None
+    list_serializer_class = None
+
     private_to_owner_fields = None
     owner = None
 
@@ -39,12 +42,16 @@ class ReadOnlyViewSetMixin(viewsets.ReadOnlyModelViewSet):
             return serializer_class
 
     def get_serializer_class(self):
-        return self.limit_serializer_class_if_needed(self.complex_serializer_class)
-
-    def list(self, request, **kwargs):
-        # Override get_serializer_class method to return the List Serializer
-        self.get_serializer_class = lambda: self.limit_serializer_class_if_needed(self.list_serializer_class)
-        return super(viewsets.ReadOnlyModelViewSet, self).list(self, request)
+        error_message_list = "'{0}' should include a 'list_serializer_class' attribute".format(self.__class__.__name__)
+        error_message_complex = "'{0}' should include a 'complex_serializer_class' attribute".format(
+            self.__class__.__name__)
+        assert self.list_serializer_class is not None, error_message_list
+        assert self.complex_serializer_class is not None, error_message_complex
+        if getattr(self, 'object', None) is not None:
+            # self has attr object therefore it's an item (detail) view
+            return self.limit_serializer_class_if_needed(self.complex_serializer_class)
+        else:
+            return self.limit_serializer_class_if_needed(self.list_serializer_class)
 
 
 class ViewSetMixin(viewsets.ModelViewSet, ReadOnlyViewSetMixin):
@@ -54,9 +61,27 @@ class ViewSetMixin(viewsets.ModelViewSet, ReadOnlyViewSetMixin):
     simple_serializer_class
     """
 
-    def get_serializer_class(self):
-        if self.request.method in permissions.SAFE_METHODS:
-            return self.limit_serializer_class_if_needed(self.complex_serializer_class)
-        else:
-            return self.limit_serializer_class_if_needed(self.simple_serializer_class)
+    simple_serializer_class = None
 
+    def get_serializer_class(self):
+        error_message_simple = "'{0}' should include a 'simple_serializer_class' attribute".format(
+            self.__class__.__name__)
+        error_message_list = "'{0}' should include a 'list_serializer_class' attribute".format(self.__class__.__name__)
+        error_message_complex = "'{0}' should include a 'complex_serializer_class' attribute".format(
+            self.__class__.__name__)
+        assert self.list_serializer_class is not None, error_message_simple
+        assert self.list_serializer_class is not None, error_message_list
+        assert self.complex_serializer_class is not None, error_message_complex
+        if getattr(self, 'object', None) is not None:
+            print "object", self.object
+            # self has attr object therefore it's an item (detail) view
+            if self.request.method in permissions.SAFE_METHODS:
+                return self.limit_serializer_class_if_needed(self.complex_serializer_class)
+            else:
+                return self.limit_serializer_class_if_needed(self.simple_serializer_class)
+        else:
+            print "no object", self.simple_serializer_class.__name__
+            if self.request.method in permissions.SAFE_METHODS:
+                return self.limit_serializer_class_if_needed(self.list_serializer_class)
+            else:
+                return self.limit_serializer_class_if_needed(self.simple_serializer_class)

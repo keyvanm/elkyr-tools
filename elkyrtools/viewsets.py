@@ -20,10 +20,34 @@ class SLCGenericAPIViewMixin(generics.GenericAPIView):
     list_serializer_class = None
     complex_serializer_class = None
 
+    def get_serializer_class(self):
+        if getattr(self, 'object', None) is not None:
+            if self.request.method in permissions.SAFE_METHODS:
+                assert_field_exists(self, "complex_serializer_class")
+                return self.complex_serializer_class
+            else:
+                assert_field_exists(self, 'simple_serializer_class')
+                return self.simple_serializer_class
+        else:
+            if self.request.method in permissions.SAFE_METHODS:
+                assert_field_exists(self, 'list_serializer_class')
+                return self.list_serializer_class
+            else:
+                assert_field_exists(self, 'simple_serializer_class')
+                return self.simple_serializer_class
+
+
+class RestrictNonOwnerViewMixin(generics.GenericAPIView):
+    """
+    A view that doesn't serialize certain fields for a requester that isn't the "owner" of the class.
+    The owner of the class must be an instance of User. The field owner in this class shows which field
+    in the object holds that User instance that is the owner. Subclasses also should define private_to_owner_fields
+    which are the fields that should be private to the owner.
+    """
     private_to_owner_fields = None
     owner = None
 
-    def is_requester_the_owner(self):
+    def __is_requester_the_owner(self):
         """
         Check if the user doing the request is the owner of the object or not
         """
@@ -35,11 +59,11 @@ class SLCGenericAPIViewMixin(generics.GenericAPIView):
         except (exceptions.ImproperlyConfigured, AttributeError):
             return False
 
-    def limit_serializer_class_if_needed(self, serializer_class):
+    def __limit_serializer_class_if_needed(self, serializer_class):
         """
         If there are private fields that only the owner should have access to, remove them from the serializer
         """
-        if self.private_to_owner_fields is None or self.is_requester_the_owner():
+        if self.private_to_owner_fields is None or self.__is_requester_the_owner():
             return serializer_class
         else:
             current_fields = serializer_class.Meta.fields
@@ -49,17 +73,5 @@ class SLCGenericAPIViewMixin(generics.GenericAPIView):
             return serializer_class
 
     def get_serializer_class(self):
-        if getattr(self, 'object', None) is not None:
-            if self.request.method in permissions.SAFE_METHODS:
-                assert_field_exists(self, "complex_serializer_class")
-                return self.limit_serializer_class_if_needed(self.complex_serializer_class)
-            else:
-                assert_field_exists(self, 'simple_serializer_class')
-                return self.limit_serializer_class_if_needed(self.simple_serializer_class)
-        else:
-            if self.request.method in permissions.SAFE_METHODS:
-                assert_field_exists(self, 'list_serializer_class')
-                return self.limit_serializer_class_if_needed(self.list_serializer_class)
-            else:
-                assert_field_exists(self, 'simple_serializer_class')
-                return self.limit_serializer_class_if_needed(self.simple_serializer_class)
+        serializer_class = super(RestrictNonOwnerViewMixin, self).get_serializer_class()
+        return self.__limit_serializer_class_if_needed(serializer_class)

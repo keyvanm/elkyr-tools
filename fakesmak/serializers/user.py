@@ -8,7 +8,6 @@ class UserSimpleSerializer(serializers.HyperlinkedModelSerializer):
     hosted_events = serializers.PrimaryKeyRelatedField(many=True)
     attended_events = serializers.PrimaryKeyRelatedField(many=True)
 
-
     class Meta:
         model = User
         fields = ('url', 'username', 'first_name', 'last_name', 'profile', 'hosted_events', 'email', 'attended_events')

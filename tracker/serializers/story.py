@@ -22,6 +22,7 @@ class ListStorySerializer(SimpleStorySerializer):
 class ComplexStorySerializer(SimpleStorySerializer):
     from user import SimpleUserSerializer
     from project import ComplexProjectSerializer
+    description_link = serializers.HyperlinkedIdentityField(view_name='story-description', format='html')
 
     project = ComplexProjectSerializer(read_only=False)
     assigned_to = SimpleUserSerializer(read_only=False)

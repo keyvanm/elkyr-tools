@@ -13,9 +13,15 @@ ProjectForm = select2_modelform(Project)
 
 class StoryAdmin(admin.ModelAdmin):
     formfield_overrides = {models.TextField: {'widget': forms.Textarea(attrs={'class': 'ckeditor'})}, }
-    list_display = ('name', 'project', 'due_date', 'state', 'difficulty', 'assigned_to', '_status',)
+    list_display = ('name', 'project', 'due_date', 'state', 'difficulty', 'assigned_to', '_status', 'description_link',)
     form = StoryForm
     list_filter = ('project', 'due_date', 'state', 'assigned_to',)
+
+    def description_link(self, obj):
+        return u'<a target="__blank" href="/api/tracker/stories/%d/description/">Description</a>' % obj.pk
+
+    description_link.allow_tags = True
+    description_link.short_description = "URL to description"
 
     def get_queryset(self, request):
         """Limit Pages to those that belong to the request's user."""

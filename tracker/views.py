@@ -1,5 +1,7 @@
 from django.contrib.auth.models import User
-from rest_framework import permissions, viewsets
+from rest_framework import permissions, viewsets, renderers
+from rest_framework.decorators import link
+from rest_framework.response import Response
 
 from elkyrtools.viewsets import SLCGenericAPIViewMixin
 from tracker import permissions as tracker_permissions
@@ -35,6 +37,13 @@ class StoryViewSet(viewsets.ModelViewSet, SLCGenericAPIViewMixin):
         if project_name is not None:
             queryset = queryset.filter(project__name=project_name)
         return queryset
+
+    @link(renderer_classes=[renderers.StaticHTMLRenderer])
+    def description(self, request, *args, **kwargs):
+        story = self.get_object()
+        link_to_admin = "/admin/tracker/story/%d/" % story.pk
+        anchor_tag_link_to_admin = '<a href="%s">Edit</a>' % link_to_admin
+        return Response(story.description + "<hr>" + anchor_tag_link_to_admin)
 
 
 class UserViewSet(viewsets.ReadOnlyModelViewSet, SLCGenericAPIViewMixin):

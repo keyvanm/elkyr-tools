@@ -1,7 +1,10 @@
 from django.contrib import admin
+from django import forms
+from django.db import models
 from easy_select2 import select2_modelform
-from tracker.models import Story, Project
 from django.db.models import Q
+
+from tracker.models import Story, Project
 
 
 StoryForm = select2_modelform(Story)
@@ -9,6 +12,7 @@ ProjectForm = select2_modelform(Project)
 
 
 class StoryAdmin(admin.ModelAdmin):
+    formfield_overrides = {models.TextField: {'widget': forms.Textarea(attrs={'class': 'ckeditor'})}, }
     list_display = ('name', 'project', 'due_date', 'state', 'difficulty', 'assigned_to', '_status',)
     form = StoryForm
     list_filter = ('project', 'due_date', 'state', 'assigned_to',)
@@ -19,6 +23,9 @@ class StoryAdmin(admin.ModelAdmin):
         if request.user.is_superuser or request.user.has_perm('tracker.all_story'):
             return qs
         return qs.filter(Q(assigned_to=request.user) | Q(project__contributers=request.user)).distinct()
+
+    class Media:
+        js = ("//cdn.ckeditor.com/4.4.2/full/ckeditor.js",)
 
 
 class ProjectAdmin(admin.ModelAdmin):

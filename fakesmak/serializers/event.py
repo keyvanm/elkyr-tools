@@ -13,7 +13,7 @@ class EventSimpleSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Event
-        fields = ("url", "name", "host", "start_time", "end_time", "location_lat", "location_long", "address",
+        fields = ("url", "id", "name", "host", "start_time", "end_time", "location_lat", "location_long", "address",
                   "description", "tags", "upvotes", "downvotes", "attendees",)
         read_only_fields = ("upvotes", "downvotes",)
 
@@ -33,8 +33,9 @@ class EventListSerializer(EventSimpleSerializer):
 
     class Meta:
         model = Event
-        fields = ("url", "name", "host", "start_time", "end_time", "location_lat", "location_long", "tags", "upvotes",
-                  "downvotes")
+        fields = (
+            "url", "id", "name", "host", "start_time", "end_time", "location_lat", "location_long", "tags", "upvotes",
+            "downvotes")
 
 
 class EventComplexSerializer(EventSimpleSerializer):

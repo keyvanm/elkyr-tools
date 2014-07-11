@@ -1,6 +1,8 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
 
+from fakesmak.fields import AbsUrlFileField
+
 
 class UserSimpleSerializer(serializers.HyperlinkedModelSerializer):
     username = serializers.Field()
@@ -30,7 +32,7 @@ class UserComplexSerializer(UserSimpleSerializer):
 class UserNestedInEventSerializer(UserSimpleSerializer):
     username = serializers.Field()
     first_name = serializers.Field()
-    avatar = serializers.ImageField(source='profile.avatar', read_only=True)
+    avatar = AbsUrlFileField(source='profile.avatar')
 
     class Meta:
         model = User

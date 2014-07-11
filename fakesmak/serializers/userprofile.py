@@ -1,5 +1,6 @@
 from rest_framework import serializers
 
+from fakesmak.fields import AbsUrlFileField
 from fakesmak.models import UserProfile
 
 
@@ -7,7 +8,7 @@ class UserProfileSimpleSerializer(serializers.HyperlinkedModelSerializer):
     from fakesmak.serializers.tag import TagListSerializer
 
     interests = TagListSerializer()
-    avatar = serializers.ImageField(read_only=True)
+    avatar = AbsUrlFileField()
     user = serializers.SlugRelatedField(read_only=True, slug_field='username')
     is_verified_facebook = serializers.BooleanField(read_only=True)
     is_verified_text = serializers.BooleanField(read_only=True)

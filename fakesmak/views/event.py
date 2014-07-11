@@ -5,6 +5,7 @@ from django.db.models import F
 from rest_framework import permissions, viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from fakesmak.permissions import IsHostOrReadOnly
 
 from elkyrtools.viewsets import SLCGenericAPIViewMixin
 from fakesmak.models import Event
@@ -16,8 +17,7 @@ class EventViewSet(viewsets.ModelViewSet, SLCGenericAPIViewMixin):
     list_serializer_class = EventListSerializer
     complex_serializer_class = EventComplexSerializer
     queryset = Event.objects.all()
-    permission_classes = (permissions.IsAuthenticated, )
-    owner = 'host'
+    permission_classes = (permissions.IsAuthenticated, IsHostOrReadOnly,)
 
     @action()
     def add_yourself_to_event(self, request, pk=None):

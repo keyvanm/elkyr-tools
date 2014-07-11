@@ -7,7 +7,7 @@ class EventSimpleSerializer(serializers.HyperlinkedModelSerializer):
     from fakesmak.serializers.tag import TagListSerializer
 
     tags = TagListSerializer()
-    # TODO: Host is being readonly here, but I feel like it should be changeable only the host itself
+    # TODO: Host is being readonly here, but I feel like it should be changeable only by the host itself
     host = serializers.SlugRelatedField(slug_field='username', read_only=True)
     attendees = serializers.SlugRelatedField(many=True, slug_field='username', read_only=True)
 

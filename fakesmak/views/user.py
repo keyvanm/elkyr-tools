@@ -1,14 +1,15 @@
 from django.contrib.auth.models import User
-from rest_framework import viewsets
+from rest_framework import viewsets, permissions
 
 from elkyrtools.viewsets import SLCGenericAPIViewMixin, RestrictNonOwnerViewMixin
 from fakesmak.serializers import UserSimpleSerializer, UserListSerializer, UserComplexSerializer
-from fakesmak.permissions import IsUserItself
+from fakesmak.permissions import IsUserItself, IsUserItselfOrReadOnly
 
 
 class UserViewSet(RestrictNonOwnerViewMixin, SLCGenericAPIViewMixin, viewsets.ModelViewSet):
     lookup_field = 'username'
     queryset = User.objects.all()
+    permission_classes = (permissions.IsAuthenticated, IsUserItselfOrReadOnly)
 
     simple_serializer_class = UserSimpleSerializer
     list_serializer_class = UserListSerializer

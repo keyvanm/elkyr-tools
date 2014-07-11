@@ -1,3 +1,7 @@
+from django.utils import timezone
+
+from django.db.models import F
+
 from rest_framework import permissions, viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -24,12 +28,37 @@ class EventViewSet(viewsets.ModelViewSet, SLCGenericAPIViewMixin):
     @action()
     def remove_yourself_from_event(self, request, pk=None):
         event = self.get_object()
-        if event.attendees.filter(username=request.user):
+        if event.attendees.filter(username=request.user.username):
             event.attendees.remove(request.user)
             return Response({'status': 'user %s removed from event %s' % (request.user, event)})
         else:
             return Response({'error': 'user %s is not an attendee of event %s' % (request.user, event)},
                             status=status.HTTP_412_PRECONDITION_FAILED)
+
+    @action()
+    def upvote(self, request, pk=None):
+        event = self.get_object()
+        if timezone.now() >= event.start_time and event.attendees.filter(username=request.user.username):
+            event.upvotes = F('upvotes') + 1
+            event.save(update_fields=['upvotes'])
+            return Response({'status': 'user %s upvoted event %s' % (request.user, event)})
+        else:
+            # TODO: Consider making these two errors separate
+            return Response(
+                {'error': 'Event %s has not started yet or user %s was not an attendee' % (event, request.user)},
+                status=status.HTTP_412_PRECONDITION_FAILED)
+
+    @action()
+    def downvote(self, request, pk=None):
+        event = self.get_object()
+        if timezone.now() >= event.start_time and event.attendees.filter(username=request.user.username):
+            event.upvotes = F('downvotes') + 1
+            event.save(update_fields=['downvotes'])
+            return Response({'status': 'user %s downvoted event %s' % (request.user, event)})
+        else:
+            return Response(
+                {'error': 'Event %s has not started yet or user %s was not an attendee' % (event, request.user)},
+                status=status.HTTP_412_PRECONDITION_FAILED)
 
     def pre_save(self, event):
         """

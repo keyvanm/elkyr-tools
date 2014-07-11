@@ -64,9 +64,8 @@ class RestrictNonOwnerViewMixin(generics.GenericAPIView):
         if self.private_to_owner_fields is None or self.__is_requester_the_owner():
             return serializer_class
         else:
-            current_fields = serializer_class.Meta.fields
+            current_fields = serializer_class().fields.keys()
             limited_fields = tuple(set(current_fields) - set(self.private_to_owner_fields))
-            print limited_fields
             serializer_class.Meta.fields = limited_fields
             return serializer_class
 

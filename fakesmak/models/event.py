@@ -21,5 +21,8 @@ class Event(models.Model):
     def __unicode__(self):
         return self.name
 
+    def is_user_an_attendee(self, user):
+        return self.attendees.filter(username=user.username).exists()
+
     class Meta:
         app_label = "fakesmak"

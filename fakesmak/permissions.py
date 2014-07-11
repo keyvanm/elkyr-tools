@@ -9,3 +9,7 @@ class IsHostOrReadOnly(permissions.BasePermission):
     def has_object_permission(self, request, view, event):
         return request.method in permissions.SAFE_METHODS or event.host == request.user
 
+
+class IsUserItself(permissions.BasePermission):
+    def has_object_permission(self, request, view, user):
+        return user == request.user

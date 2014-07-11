@@ -3,6 +3,7 @@ from rest_framework import viewsets
 
 from elkyrtools.viewsets import SLCGenericAPIViewMixin, RestrictNonOwnerViewMixin
 from fakesmak.serializers import UserSimpleSerializer, UserListSerializer, UserComplexSerializer
+from fakesmak.permissions import IsUserItself
 
 
 class UserViewSet(RestrictNonOwnerViewMixin, SLCGenericAPIViewMixin, viewsets.ModelViewSet):
@@ -13,5 +14,5 @@ class UserViewSet(RestrictNonOwnerViewMixin, SLCGenericAPIViewMixin, viewsets.Mo
     list_serializer_class = UserListSerializer
     complex_serializer_class = UserComplexSerializer
 
-    owner = 'self'
+    owner_permission_class = IsUserItself
     private_to_owner_fields = ('email', 'attended_events',)

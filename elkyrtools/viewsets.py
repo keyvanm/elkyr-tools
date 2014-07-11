@@ -45,18 +45,16 @@ class RestrictNonOwnerViewMixin(generics.GenericAPIView):
     which are the fields that should be private to the owner.
     """
     private_to_owner_fields = None
-    owner = None
+    owner_permission_class = None
 
     def __is_requester_the_owner(self):
         """
         Check if the user doing the request is the owner of the object or not
         """
-        # TODO: Still feels a bit hacky, feel free to find a better solution later
-        try:
-            if self.owner != 'self':
-                return self.request.user.username == self.get_object_or_none().__getattribute__(self.owner).username
-            return self.request.user.username == self.get_object_or_none().username
-        except (exceptions.ImproperlyConfigured, AttributeError):
+        obj = getattr(self, 'object', None)
+        if obj:
+            return self.owner_permission_class().has_object_permission(self.request, None, obj)
+        else:
             return False
 
     def __limit_serializer_class_if_needed(self, serializer_class):

@@ -1,5 +1,6 @@
 from rest_framework import generics, permissions
 from django.core import exceptions
+import copy
 
 
 def assert_field_exists(obj, field):
@@ -7,7 +8,7 @@ def assert_field_exists(obj, field):
     assert getattr(obj, field, None) is not None, error_message.format(field)
 
 
-class SLCGenericAPIViewMixin(generics.GenericAPIView):
+class SLCGenericAPIViewMixin(object):
     """
     A view that supports 2 different kinds of serialization for listing and viewing objects
     2 fields need to be defined on the view that subclasses it
@@ -37,7 +38,7 @@ class SLCGenericAPIViewMixin(generics.GenericAPIView):
                 return self.simple_serializer_class
 
 
-class RestrictNonOwnerViewMixin(generics.GenericAPIView):
+class RestrictNonOwnerViewMixin(object):
     """
     A view that doesn't serialize certain fields for a requester that isn't the "owner" of the class.
     The owner of the class must be an instance of User. The field owner in this class shows which field
@@ -66,8 +67,10 @@ class RestrictNonOwnerViewMixin(generics.GenericAPIView):
         else:
             current_fields = serializer_class().fields.keys()
             limited_fields = tuple(set(current_fields) - set(self.private_to_owner_fields))
-            serializer_class.Meta.fields = limited_fields
-            return serializer_class
+            meta = type('Meta', (serializer_class.Meta, object), {'fields': limited_fields})
+            limited_serializer_class = type('LimitedFields%s' % serializer_class.__name__, (serializer_class,),
+                                            {'Meta': meta})
+            return limited_serializer_class
 
     def get_serializer_class(self):
         serializer_class = super(RestrictNonOwnerViewMixin, self).get_serializer_class()

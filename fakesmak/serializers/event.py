@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 from fakesmak.models import Event
+from fakesmak.fields import AbsUrlFileField
 
 
 class EventSimpleSerializer(serializers.HyperlinkedModelSerializer):
@@ -19,7 +20,7 @@ class EventSimpleSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class EventNestedInUserSerializer(EventSimpleSerializer):
-    host_avatar = serializers.ImageField(source='host.profile.avatar', read_only=True)
+    host_avatar = AbsUrlFileField(source='host.profile.avatar')
 
     class Meta:
         model = Event

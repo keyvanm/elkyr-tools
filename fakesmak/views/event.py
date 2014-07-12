@@ -16,7 +16,7 @@ class EventViewSet(viewsets.ModelViewSet, SLCGenericAPIViewMixin):
     simple_serializer_class = EventSimpleSerializer
     list_serializer_class = EventListSerializer
     complex_serializer_class = EventComplexSerializer
-    queryset = Event.objects.all()
+    model = Event
     permission_classes = (permissions.IsAuthenticated, IsHostOrReadOnly,)
 
     @action(permission_classes=[permissions.IsAuthenticated])

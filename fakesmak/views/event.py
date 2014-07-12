@@ -19,7 +19,7 @@ class EventViewSet(viewsets.ModelViewSet, SLCGenericAPIViewMixin):
     queryset = Event.objects.all()
     permission_classes = (permissions.IsAuthenticated, IsHostOrReadOnly,)
 
-    @action()
+    @action(permission_classes=[permissions.IsAuthenticated])
     def add_yourself_to_event(self, request, pk=None):
         event = self.get_object()
         if not event.is_user_an_attendee(request.user):
@@ -29,7 +29,7 @@ class EventViewSet(viewsets.ModelViewSet, SLCGenericAPIViewMixin):
             return Response({'error': 'user %s is already an attendee of event %s' % (request.user, event)},
                             status=status.HTTP_412_PRECONDITION_FAILED)
 
-    @action()
+    @action(permission_classes=[permissions.IsAuthenticated])
     def remove_yourself_from_event(self, request, pk=None):
         event = self.get_object()
         if event.is_user_an_attendee(request.user):
@@ -39,7 +39,7 @@ class EventViewSet(viewsets.ModelViewSet, SLCGenericAPIViewMixin):
             return Response({'error': 'user %s is not an attendee of event %s' % (request.user, event)},
                             status=status.HTTP_412_PRECONDITION_FAILED)
 
-    @action()
+    @action(permission_classes=[permissions.IsAuthenticated])
     def upvote(self, request, pk=None):
         event = self.get_object()
         if timezone.now() >= event.start_time and event.is_user_an_attendee(request.user):
@@ -52,7 +52,7 @@ class EventViewSet(viewsets.ModelViewSet, SLCGenericAPIViewMixin):
                 {'error': 'Event %s has not started yet or user %s was not an attendee' % (event, request.user)},
                 status=status.HTTP_412_PRECONDITION_FAILED)
 
-    @action()
+    @action(permission_classes=[permissions.IsAuthenticated])
     def downvote(self, request, pk=None):
         event = self.get_object()
         if timezone.now() >= event.start_time and event.is_user_an_attendee(request.user):

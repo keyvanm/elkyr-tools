@@ -8,7 +8,8 @@ from fakesmak.permissions import IsUserItself, IsUserItselfOrReadOnly
 
 class UserViewSet(RestrictNonOwnerViewMixin, SLCGenericAPIViewMixin, viewsets.ModelViewSet):
     lookup_field = 'username'
-    queryset = User.objects.all()
+    model = User
+    queryset = User.objects.filter(is_active=True)
     permission_classes = (permissions.IsAuthenticated, IsUserItselfOrReadOnly)
 
     simple_serializer_class = UserSimpleSerializer

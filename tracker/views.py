@@ -14,7 +14,7 @@ class ProjectViewSet(viewsets.ModelViewSet, SLCGenericAPIViewMixin):
     complex_serializer_class = ComplexProjectSerializer
     simple_serializer_class = SimpleProjectSerializer
     list_serializer_class = ListProjectSerializer
-    queryset = Project.objects.all()
+    model = Project
     permission_classes = (
         permissions.IsAuthenticated, tracker_permissions.DevIsManagerOrReadOnly,)
 
@@ -50,4 +50,5 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet, SLCGenericAPIViewMixin):
     complex_serializer_class = ComplexUserSerializer
     list_serializer_class = ListUserSerializer
     lookup_field = 'username'
-    queryset = User.objects.all()
+    model = User
+    queryset = User.objects.filter(is_active=True)

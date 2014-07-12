@@ -150,6 +150,11 @@ REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS': ('rest_framework.filters.DjangoFilterBackend',),
 }
 
+SWAGGER_SETTINGS = {
+    "is_authenticated": True,  # Set to True to enforce user authentication,
+    "is_superuser": True,  # Set to True to enforce admin only access
+}
+
 OAUTH2_PROVIDER = {
     'ACCESS_TOKEN_EXPIRE_SECONDS': 120,
 }

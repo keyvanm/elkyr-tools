@@ -31,8 +31,8 @@ class StoryAdmin(admin.ModelAdmin):
         return qs.filter(Q(assigned_to=request.user) | Q(project__contributers=request.user)).distinct()
 
     class Media:
-        js = ("//cdn.ckeditor.com/4.4.2/full/ckeditor.js", '/static/admin/js/story.js',)
-        css = {'all': ('/static/admin/css/story.css',)}
+        js = ("http://cdn.ckeditor.com/4.4.2/full/ckeditor.js", 'admin/js/story.js',)
+        css = {'all': ('admin/css/story.css',)}
 
 
 class ProjectAdmin(admin.ModelAdmin):
